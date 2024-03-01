@@ -4,7 +4,9 @@ import { fetchAllUser } from '../services/UserService'
 import ReactPaginate from 'react-paginate';
 import ModalAddNew from './ModalAddNew';
 import ModalEditUser from './ModalEditUser';
+import ModalConfirm from './ModalConfirm';
 import _ from "lodash"
+import './TableUser.scss'
 
 const TableUsers = (props) => {
     const [listUsers, setListUsers] = useState([]);
@@ -12,12 +14,20 @@ const TableUsers = (props) => {
     const[ totalPages, setTotalPages] = useState(0)
 
     const [isShowModalAdddNew, setIsShowModalAddNew] = useState(false)
+
     const [isShowModalEdit,setIsShowModalEdit] = useState(false)
     const [dataUserEdit, setDataUserEdit] =  useState('')
 
+    const [isShowModalDelete, setIsShowModalDelete] = useState(false)
+    const [dataUserDelete, setDataUserDelete] = useState({})
+
+    const [sortBy, setSortBy] = useState("asc")
+    const [sortField, setSortField] = useState("id")
+ 
     const handleClose = () => {
       setIsShowModalAddNew(false)
       setIsShowModalEdit(false)
+      setIsShowModalDelete(false)
     }
     const handleUpdateTable = (user) => {
         setListUsers([user,...listUsers])
@@ -45,6 +55,24 @@ const TableUsers = (props) => {
         getUsers(+event.selected + 1)
     }
 
+    const handleDeleteUser = (user) => {
+        setIsShowModalDelete(true)
+        setDataUserDelete(user)
+    }
+
+    const handleDeleteUserFromModal = (user) =>{
+        let cloneListUsers = _.cloneDeep(listUsers)
+        cloneListUsers = cloneListUsers.filter(item => item.id  !== user.id)
+        setListUsers(cloneListUsers)
+    }
+    const handleSort = (sortBy, sortField) => {
+        setSortBy(sortBy); 
+        setSortField(sortField)
+
+        let cloneListUsers = _.cloneDeep(listUsers)
+        cloneListUsers = _.orderBy(cloneListUsers, [sortField],[sortBy])
+        setListUsers(cloneListUsers)
+    }
     
     const handleEditUser = (user) => {
         setDataUserEdit(user)
@@ -62,11 +90,35 @@ const TableUsers = (props) => {
             <Table striped bordered hover>
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Email</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Actions</th>
+                    <th>
+                        <div className='sort-header'>
+                            <span>ID</span>
+                            <span>
+                                <i
+                                className="fa-solid fa-arrow-down-long"
+                                onClick={() => handleSort("desc", "id") } ></i>
+                                <i 
+                                onClick={() => handleSort("asc", "id") }
+                                className="fa-solid fa-arrow-up-long"></i>
+                            </span>
+                        </div>
+                    </th>
+                        <th >Email</th>
+                        <th >
+                            <div className='sort-header'>
+                                <span>First Name</span>
+                                <span>
+                                <i
+                                className="fa-solid fa-arrow-down-long"
+                                onClick={() => handleSort("desc", "first_name") } ></i>
+                                <i 
+                                onClick={() => handleSort("asc", "first_name") }
+                                className="fa-solid fa-arrow-up-long"></i>
+                            </span>
+                            </div>
+                        </th>
+                        <th >Last Name</th>
+                        <th >Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,7 +134,11 @@ const TableUsers = (props) => {
                                         <button className='btn btn-warning mx-3'
                                         onClick={() => handleEditUser(item)}
                                         >Edit</button>
-                                        <button className='btn btn-danger'>Delete</button>
+                                        <button 
+                                        onClick={() => handleDeleteUser(item)}
+                                        className='btn btn-danger'>
+                                            Delete
+                                            </button>
                                     </td>
                                 </tr>
                             )
@@ -120,6 +176,12 @@ const TableUsers = (props) => {
             handleClose={handleClose}
             handleEditUserFromModal={handleEditUserFromModal}
                        
+        />
+        <ModalConfirm
+        show = {isShowModalDelete}
+        handleClose={handleClose}
+        dataUserDelete = {dataUserDelete}
+        handleDeleteUserFromModal = {handleDeleteUserFromModal}
         />
         </>
     )
