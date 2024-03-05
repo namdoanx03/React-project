@@ -156,9 +156,9 @@ const TableUsers = (props) => {
     }
     return (
         <>
-            <div className='my-3 add-new'>
-                <span><b>List Users:</b></span>
-                <div className='group-btn'>
+            <div className='my-3 add-new d-sm-flex'>
+                <span ><b>List Users:</b></span>
+                <div className='group-btn mt-sm-0 mt-2'>
                     <label htmlFor="test"
                         className='btn btn-warning'
                     > <i className="fa-solid fa-file-import"></i>  Import</label>
@@ -179,14 +179,15 @@ const TableUsers = (props) => {
                 </div>
 
             </div>
-            <div className='col-4 my-3'>
+            <div className='col-12 col-sm-4 my-3'>
                 <input className='form-control'
                     placeholder='Search user by email...'
                     // value={keyword}
                     onChange={(event) => handleSearch(event)}
                 />
             </div>
-            <Table striped bordered hover>
+            <div className='customize-table'>
+            <Table striped bordered hover >
                 <thead>
                     <tr>
                         <th>
@@ -235,7 +236,7 @@ const TableUsers = (props) => {
                                         >Edit</button>
                                         <button
                                             onClick={() => handleDeleteUser(item)}
-                                            className='btn btn-danger'>
+                                            className='btn btn-danger '>
                                             Delete
                                         </button>
                                     </td>
@@ -245,7 +246,10 @@ const TableUsers = (props) => {
 
                 </tbody>
             </Table>
+            </div>
+            
             <ReactPaginate
+    
                 breakLabel="..."
                 nextLabel="next >"
                 onPageChange={handlePageClick}
